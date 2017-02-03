@@ -1,5 +1,11 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const app = express();
+
+// parse application/x-www-form-urlencoded 
+app.use(bodyParser.urlencoded({ extended: false }));
+
 
 app.set('views', './views');
 app.set('view engine', 'jade');
@@ -7,7 +13,6 @@ app.set('view engine', 'jade');
 if (app.get('env') === 'development') {
     app.locals.pretty = true;
 }
-
 console.log('env value = ' + app.get('env'));
 
 app.use(express.static('public'));
@@ -47,12 +52,20 @@ app.get('/topic/:id', (req, res) => {
 	];
 
 	var as = `
-	<a href="/topic?id=0">Javascript</a><br>
-	<a href="/topic?id=1">Nodejs</a><br>
-	<a href="/topic?id=2">Express</a><br>
+	<a href="/topic/0">Javascript</a><br>
+	<a href="/topic/1">Nodejs</a><br>
+	<a href="/topic/2">Express</a><br>
 	${topics[(req.params.id || 0) % 3]}`;
 	res.send(as);
 	// res.send(topics[(req.params.id || 0) % 3]);
+});
+
+app.get('/form', (req, res) => {
+	res.render('form');
+});
+
+app.post('/form_receiver', (req, res) => {
+	res.send(req.body.title + ', ' + req.body.description);
 });
 
 app.get('/template', (req, res) => {
